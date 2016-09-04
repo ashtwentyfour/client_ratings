@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Sep 04, 2016 at 01:34 AM
+-- Generation Time: Sep 04, 2016 at 06:53 AM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -43,7 +43,7 @@ CREATE TABLE `assessments` (
 
 INSERT INTO `assessments` (`assess_id`, `user_id`, `client_id`, `assess_date`, `survey_name`, `instructions`, `total_score`, `global_rel_score`) VALUES
 (1, 1, 1, '2015-12-01', 'survey_1', 'take the survey', 1.35, 35.05037136444091),
-(2, 1, 2, '2015-10-14', 'survey_2', 'take the survey', 3.05, 64.94962863555908);
+(2, 2, 2, '2015-10-14', 'survey_2', 'take the survey', 4.1, 64.94962863555908);
 
 -- --------------------------------------------------------
 
@@ -188,7 +188,7 @@ INSERT INTO `responses` (`response_id`, `question_id`, `assess_id`, `answer_nume
 (1, 1, 1, 2, 'n/a'),
 (2, 2, 1, 1, 'n/a'),
 (3, 1, 2, 4, 'n/a'),
-(4, 2, 2, 3, 'n/a');
+(4, 2, 2, 6, 'n/a');
 
 -- --------------------------------------------------------
 
@@ -263,7 +263,8 @@ ALTER TABLE `assessment_score`
 -- Indexes for table `avg_score`
 --
 ALTER TABLE `avg_score`
-  ADD PRIMARY KEY (`avg_score_id`);
+  ADD PRIMARY KEY (`avg_score_id`),
+  ADD KEY `fk_assessment_score_id` (`assessment_score_id`);
 
 --
 -- Indexes for table `client`

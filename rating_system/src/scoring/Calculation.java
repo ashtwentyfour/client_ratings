@@ -29,7 +29,7 @@ public class Calculation {
 	
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
 	static final String DB_URL = "jdbc:mysql://192.168.99.100:8081/client_ratings?useSSL=false";
-	static final String password = "12Slashaxel";
+	static final String password = "abcd";
 	
 	// client specifications 
 	private String location; 

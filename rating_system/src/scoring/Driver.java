@@ -1,4 +1,4 @@
-package project_parallel_scoring;
+package scoring;
 
 
 public class Driver {

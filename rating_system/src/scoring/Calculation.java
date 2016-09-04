@@ -1,4 +1,4 @@
-package project_parallel_scoring;
+package scoring;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -8,7 +8,7 @@
 
    docker run --name my-php-admin -d --link my-sql-db:db -p 8080:80 -e PMA_PASSWORD=abcd phpmyadmin/phpmyadmin
 
-Navigate to <docker-machine IP>:8080 on the browser and enter the username 'root' and password 'abcd'
+Navigate to docker-machine IP:8080 on the browser and enter the username 'root' and password 'abcd'
 
 Create a new database 'client_ratings' and import the 'client_ratings.sql' file to initialize the DB
 
@@ -18,4 +18,4 @@ Create a new database 'client_ratings' and import the 'client_ratings.sql' file 
 
   docker run -d --name rating_server -p 5000:8081 rating_tool
 
-Navigate to <docker-machine IP>:5000/<Industry>/<Country> to compute the latest scores
+Navigate to docker-machine IP:5000/Industry/Country to compute the latest scores

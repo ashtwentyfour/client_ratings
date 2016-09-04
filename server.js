@@ -8,8 +8,6 @@ const EventEmitter = require('events');
 
 var code_compile = 'javac -d rating_system/bin -sourcepath rating_system/src rating_system/src/scoring/*.java';
 
-var code_run = 'java -cp rating_system/external_jars/mysql-connector-java-5.1.39-bin.jar:rating_system/bin scoring.Driver';
-
 app.get('/rate_client/:industry/:country', function(req,res){
 
     var body = new EventEmitter();
@@ -26,6 +24,7 @@ app.get('/rate_client/:industry/:country', function(req,res){
     });
 
     body.on('update', function() {
+      var code_run = 'java -cp rating_system/external_jars/mysql-connector-java-5.1.39-bin.jar:rating_system/bin scoring.Driver';
       code_run = code_run + ' ' + req.params.industry + ' ' + req.params.country;
       var run = exec(code_run, function(error, stdout, stderr){
              if (error !== null) {

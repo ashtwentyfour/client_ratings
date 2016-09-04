@@ -1,0 +1,1 @@
+FROM ashtwentyfour/java-node

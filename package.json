@@ -1,12 +1,20 @@
 {
-  "name": "client_rating",
+  "name": "nodejs_file_upload",
   "version": "1.0.0",
-  "description": "docker run --name my-sql-db -e MYSQL_ROOT_PASSWORD=12Slashaxel -p 8081:3306 -d mysql/mysql-server",
+  "description": "",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "author": "Ashwin Menon",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "events": "^1.1.1",
+    "express": "^4.14.0",
+    "fs": "0.0.2",
+    "multer": "^1.2.0",
+    "shelljs": "^0.7.3"
+  }
 }

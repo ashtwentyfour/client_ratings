@@ -12,6 +12,6 @@ RUN cd /code && npm install
 
 WORKDIR /code
 
-EXPOSE 9000
+EXPOSE 8081
 
 ENTRYPOINT ["npm", "start"]

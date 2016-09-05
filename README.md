@@ -18,4 +18,10 @@ Create a new database 'client_ratings' and import the 'client_ratings.sql' file 
 
    docker run -d --name rating_server -p 5000:8081 rating_tool
 
-Navigate to docker-machine-IP:5000/Industry/Country to compute the latest scores
+### COMPUTE SCORES FOR CLIENTS OF A GIVEN INDUSTRY AND LOCATION
+
+   curl -X POST http://docker-machine-IP:5000/Industry/Country
+
+### RETRIEVE ASSESSMENT INFORMATION FOR A CLIENT
+
+   curl http://docker-machine-IP:5000/getassessmentscores/Client

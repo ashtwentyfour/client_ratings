@@ -8,6 +8,14 @@ var exec = require('child_process').exec
 
 const EventEmitter = require('events');
 
+var bodyParser = require('body-parser');
+
+var urlencodedParser = bodyParser.urlencoded({ extended: true });
+
+app.use(express.static('public'));
+
+app.use(bodyParser.json());
+
 var code_compile = 'javac -d rating_system/bin -sourcepath rating_system/src rating_system/src/scoring/*.java';
 
 /*
@@ -35,7 +43,7 @@ app.post('/rate_client/:industry/:country', function(req,res){
              if (error !== null) {
                  console.log('exec error: ' + error);
              }
-             res.end('rating complete');
+             res.end('rating complete\n');
       });
     });
 });
@@ -79,7 +87,37 @@ app.get('/getassessmentscores/:client', function(req, res){
        });
     });
   });
+});
 
+app.post('/addcompany', function(req,res){
+
+    var query = 'INSERT INTO client SET ?';
+
+    var body = new EventEmitter();
+    // db parameters
+    var con = mysql.createConnection({
+      host: "192.168.99.100",
+      user: "root",
+      password: "abcd",
+      port: 8081,
+      database: 'client_ratings'
+    });
+    // connect to the db and execute queries
+    con.connect(function(err) {
+      if(err) {
+        console.log('Error connecting to Db');
+        return;
+      }
+      console.log('Connection to DB established');
+      body.emit('connected');
+    });
+    // add client to database
+    body.on('connected', function(){
+       con.query(query, req.body, function(err,resp){
+          if(err) throw err;
+          res.end('added new client\n');
+       });
+    });
 });
 
 

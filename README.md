@@ -20,7 +20,7 @@ Create a new database 'client_ratings' and import the 'client_ratings.sql' file 
 
 ### COMPUTE SCORES FOR CLIENTS OF A GIVEN INDUSTRY AND LOCATION
 
-   curl -X POST http://docker-machine-IP:5000/Industry/Country
+   curl -X POST http://docker-machine-IP:5000/rate_client/Industry/Country
 
 ### RETRIEVE ASSESSMENT INFORMATION FOR A CLIENT
 

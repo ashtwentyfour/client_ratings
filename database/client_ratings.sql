@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Sep 04, 2016 at 06:53 AM
+-- Generation Time: Sep 05, 2016 at 07:57 AM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -33,8 +33,8 @@ CREATE TABLE `assessments` (
   `assess_date` date NOT NULL,
   `survey_name` varchar(150) NOT NULL,
   `instructions` varchar(255) NOT NULL,
-  `total_score` double NOT NULL,
-  `global_rel_score` double NOT NULL
+  `total_score` double NOT NULL DEFAULT '-1',
+  `global_rel_score` double NOT NULL DEFAULT '-1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --

@@ -228,10 +228,19 @@ public class Calculation {
 
 		    		  while(gh.next()) {
 		    			  // update the average score table
+								sql = "INSERT IGNORE INTO `client_ratings`.`avg_score` (`assessment_score_id`, `industry_domain_avg`, "
+										+ "`industry_cum_avg`) VALUES "
+										+ "(" + Integer.toString(gh.getInt("assessment_score_id")) +
+										"," + Double.toString(avg) + "," + Double.toString(ind_avg) + ")";
+								/*
 		    			  sql = "INSERT INTO `client_ratings`.`avg_score` (`assessment_score_id`, `industry_domain_avg`, "
 		    			  		+ "`industry_cum_avg`) VALUES "
 		    			  		+ "(" + Integer.toString(gh.getInt("assessment_score_id")) +
-		    			  		"," + Double.toString(avg) + "," + Double.toString(ind_avg) + ")";
+		    			  		"," + Double.toString(avg) + "," + Double.toString(ind_avg) + ")";*/
+								/*
+								sql = "REPLACE INTO `client_ratings`.`avg_score` SET `assessment_score_id` = " + Integer.toString(gh.getInt("assessment_score_id"))
+								      + ", `industry_domain_avg` = " + Double.toString(avg) + ", `industry_cum_avg` = " +
+											 Double.toString(ind_avg);*/
 		    			  stmt = conn.createStatement();
 		    			  stmt.executeUpdate(sql);
 		    		  }

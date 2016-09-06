@@ -1,4 +1,4 @@
-# COMPANY/CLIENT RATING APPLICATION
+# COMPANY/CLIENT RATING APPLICATION (PROOF OF CONCEPT)
 
 ## TO RUN
 
@@ -25,3 +25,11 @@ Create a new database 'client_ratings' and import the 'client_ratings.sql' file 
 ### RETRIEVE ASSESSMENT INFORMATION FOR A CLIENT
 
    curl http://docker-machine-IP:5000/getassessmentscores/Client
+
+### ADD A NEW CLIENT/COMPANY
+
+   curl -X POST http://docker-machine-IP:5000/addcompany --header 'Content-Type:application/json' -d '{"rater_id": 1, "client_name": "Apple", "client_industry": "Consumer Electronics", "parent_company": "Apple", "client_division": "Hardware", "client_location": "USA", "industry_size": 2000}' --header 'Accept:text/html'
+
+### ADD A NEW DOMAIN AND CORRESPONDING QUESTION LIST TO THE database
+
+   curl -X POST http://docker-machine-IP:5000/adddomain --header 'Content-Type:application/json' -d '{"domain_name": "Web Security", "domain_description": "Web Security", "questions": [{"question_text": "How secure is the web security ?", "question_rank": 0.2}, {"question_text": "What is the web ?", "question_rank": 0.1}]}'

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Sep 05, 2016 at 07:05 PM
+-- Generation Time: Sep 06, 2016 at 03:55 AM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -31,8 +31,8 @@ CREATE TABLE `assessments` (
   `user_id` int(50) NOT NULL,
   `client_id` int(50) NOT NULL,
   `assess_date` date NOT NULL DEFAULT '1990-10-03',
-  `survey_name` varchar(150) NOT NULL,
-  `instructions` varchar(255) NOT NULL,
+  `survey_name` varchar(150) DEFAULT NULL,
+  `instructions` varchar(255) DEFAULT NULL,
   `total_score` double NOT NULL DEFAULT '-1',
   `global_rel_score` double NOT NULL DEFAULT '-1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -122,26 +122,47 @@ INSERT INTO `domain` (`domain_id`, `assess_id`, `domain_name`, `domain_explanati
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `domain_info`
+--
+
+CREATE TABLE `domain_info` (
+  `domain_id` int(10) NOT NULL,
+  `domain_name` varchar(255) NOT NULL,
+  `domain_description` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `domain_info`
+--
+
+INSERT INTO `domain_info` (`domain_id`, `domain_name`, `domain_description`) VALUES
+(1, 'physical security', 'physical security'),
+(2, 'Web Security', 'Web Security');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `questions`
 --
 
 CREATE TABLE `questions` (
   `question_id` int(10) NOT NULL,
   `domain_id` int(10) NOT NULL,
-  `question_number` int(100) NOT NULL,
   `question_text` varchar(225) NOT NULL,
-  `question_rank` double NOT NULL,
-  `dependent_question_id` int(10) NOT NULL,
-  `dependent_question_text` varchar(225) NOT NULL
+  `question_rank` double NOT NULL DEFAULT '0.5',
+  `dependent_question_id` int(10) NOT NULL DEFAULT '-1',
+  `dependent_question_text` varchar(225) NOT NULL DEFAULT '""'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `questions`
 --
 
-INSERT INTO `questions` (`question_id`, `domain_id`, `question_number`, `question_text`, `question_rank`, `dependent_question_id`, `dependent_question_text`) VALUES
-(1, 1, 1, 'Where is your firm located ?', 0.5, 1, ''),
-(2, 1, 2, 'When was your firm established ?', 0.35, 2, '');
+INSERT INTO `questions` (`question_id`, `domain_id`, `question_text`, `question_rank`, `dependent_question_id`, `dependent_question_text`) VALUES
+(1, 1, 'Where is your firm located ?', 0.5, 1, ''),
+(2, 1, 'When was your firm established ?', 0.35, 2, ''),
+(10, 2, 'How secure is the web security ?', 0.2, -1, '""'),
+(11, 2, 'What is the web ?', 0.1, -1, '""');
 
 -- --------------------------------------------------------
 
@@ -285,6 +306,13 @@ ALTER TABLE `domain`
   ADD KEY `domain_ibfk_1` (`assess_id`);
 
 --
+-- Indexes for table `domain_info`
+--
+ALTER TABLE `domain_info`
+  ADD PRIMARY KEY (`domain_name`),
+  ADD UNIQUE KEY `domain_id` (`domain_id`);
+
+--
 -- Indexes for table `questions`
 --
 ALTER TABLE `questions`
@@ -354,7 +382,7 @@ ALTER TABLE `client`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `question_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `question_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `raters`
 --
@@ -408,7 +436,8 @@ ALTER TABLE `client`
 -- Constraints for table `domain`
 --
 ALTER TABLE `domain`
-  ADD CONSTRAINT `domain_ibfk_1` FOREIGN KEY (`assess_id`) REFERENCES `assessments` (`assess_id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `domain_ibfk_1` FOREIGN KEY (`assess_id`) REFERENCES `assessments` (`assess_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `domain_info` (`domain_id`);
 
 --
 -- Constraints for table `responses`

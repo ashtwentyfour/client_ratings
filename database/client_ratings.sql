@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Sep 05, 2016 at 06:04 PM
+-- Generation Time: Sep 06, 2016 at 03:55 AM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -31,8 +31,8 @@ CREATE TABLE `assessments` (
   `user_id` int(50) NOT NULL,
   `client_id` int(50) NOT NULL,
   `assess_date` date NOT NULL DEFAULT '1990-10-03',
-  `survey_name` varchar(150) NOT NULL,
-  `instructions` varchar(255) NOT NULL,
+  `survey_name` varchar(150) DEFAULT NULL,
+  `instructions` varchar(255) DEFAULT NULL,
   `total_score` double NOT NULL DEFAULT '-1',
   `global_rel_score` double NOT NULL DEFAULT '-1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -43,7 +43,7 @@ CREATE TABLE `assessments` (
 
 INSERT INTO `assessments` (`assess_id`, `user_id`, `client_id`, `assess_date`, `survey_name`, `instructions`, `total_score`, `global_rel_score`) VALUES
 (1, 1, 1, '2015-12-01', 'survey_1', 'take the survey', 1.35, 35.05037136444091),
-(2, 2, 2, '2015-10-14', 'survey_2', 'take the survey', 3.05, 64.94962863555908);
+(2, 2, 2, '2015-10-14', 'survey_2', 'take the survey', 2.35, 64.94962863555908);
 
 -- --------------------------------------------------------
 
@@ -59,20 +59,6 @@ CREATE TABLE `assessment_score` (
   `assessment_score_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `assessment_score`
---
-
-INSERT INTO `assessment_score` (`assess_id`, `dom_score`, `rel_score`, `domain_id`, `assessment_score_id`) VALUES
-(1, 1.35, 35.05037136444091, 1, 1),
-(2, 4.1, 64.94962863555908, 1, 2),
-(1, 1.35, 35.05037136444091, 1, 3),
-(2, 4.1, 64.94962863555908, 1, 4),
-(1, 1.35, 35.05037136444091, 1, 5),
-(2, 3.05, 64.94962863555908, 1, 6),
-(1, 1.35, 35.05037136444091, 1, 7),
-(2, 3.05, 64.94962863555908, 1, 8);
-
 -- --------------------------------------------------------
 
 --
@@ -85,32 +71,6 @@ CREATE TABLE `avg_score` (
   `industry_cum_avg` double DEFAULT NULL,
   `avg_score_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `avg_score`
---
-
-INSERT INTO `avg_score` (`assessment_score_id`, `industry_domain_avg`, `industry_cum_avg`, `avg_score_id`) VALUES
-(1, 2.7249999999999996, 2.7249999999999996, 1),
-(2, 2.7249999999999996, 2.7249999999999996, 2),
-(1, 2.7249999999999996, 2.7249999999999996, 3),
-(3, 2.7249999999999996, 2.7249999999999996, 4),
-(2, 2.7249999999999996, 2.7249999999999996, 5),
-(4, 2.7249999999999996, 2.7249999999999996, 6),
-(1, 2.2, 2.2, 7),
-(3, 2.2, 2.2, 8),
-(5, 2.2, 2.2, 9),
-(2, 2.2, 2.2, 10),
-(4, 2.2, 2.2, 11),
-(6, 2.2, 2.2, 12),
-(1, 2.2, 2.2, 13),
-(3, 2.2, 2.2, 14),
-(5, 2.2, 2.2, 15),
-(7, 2.2, 2.2, 16),
-(2, 2.2, 2.2, 17),
-(4, 2.2, 2.2, 18),
-(6, 2.2, 2.2, 19),
-(8, 2.2, 2.2, 20);
 
 -- --------------------------------------------------------
 
@@ -162,26 +122,47 @@ INSERT INTO `domain` (`domain_id`, `assess_id`, `domain_name`, `domain_explanati
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `domain_info`
+--
+
+CREATE TABLE `domain_info` (
+  `domain_id` int(10) NOT NULL,
+  `domain_name` varchar(255) NOT NULL,
+  `domain_description` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `domain_info`
+--
+
+INSERT INTO `domain_info` (`domain_id`, `domain_name`, `domain_description`) VALUES
+(1, 'physical security', 'physical security'),
+(2, 'Web Security', 'Web Security');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `questions`
 --
 
 CREATE TABLE `questions` (
   `question_id` int(10) NOT NULL,
   `domain_id` int(10) NOT NULL,
-  `question_number` int(100) NOT NULL,
   `question_text` varchar(225) NOT NULL,
-  `question_rank` double NOT NULL,
-  `dependent_question_id` int(10) NOT NULL,
-  `dependent_question_text` varchar(225) NOT NULL
+  `question_rank` double NOT NULL DEFAULT '0.5',
+  `dependent_question_id` int(10) NOT NULL DEFAULT '-1',
+  `dependent_question_text` varchar(225) NOT NULL DEFAULT '""'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `questions`
 --
 
-INSERT INTO `questions` (`question_id`, `domain_id`, `question_number`, `question_text`, `question_rank`, `dependent_question_id`, `dependent_question_text`) VALUES
-(1, 1, 1, 'Where is your firm located ?', 0.5, 1, ''),
-(2, 1, 2, 'When was your firm established ?', 0.35, 2, '');
+INSERT INTO `questions` (`question_id`, `domain_id`, `question_text`, `question_rank`, `dependent_question_id`, `dependent_question_text`) VALUES
+(1, 1, 'Where is your firm located ?', 0.5, 1, ''),
+(2, 1, 'When was your firm established ?', 0.35, 2, ''),
+(10, 2, 'How secure is the web security ?', 0.2, -1, '""'),
+(11, 2, 'What is the web ?', 0.1, -1, '""');
 
 -- --------------------------------------------------------
 
@@ -229,7 +210,7 @@ INSERT INTO `responses` (`response_id`, `question_id`, `assess_id`, `answer_nume
 (1, 1, 1, 2, 'n/a'),
 (2, 2, 1, 1, 'n/a'),
 (3, 1, 2, 4, 'n/a'),
-(4, 2, 2, 3, 'n/a');
+(4, 2, 2, 1, 'n/a');
 
 -- --------------------------------------------------------
 
@@ -306,6 +287,7 @@ ALTER TABLE `assessment_score`
 --
 ALTER TABLE `avg_score`
   ADD PRIMARY KEY (`avg_score_id`),
+  ADD UNIQUE KEY `assessment_score_id` (`assessment_score_id`),
   ADD KEY `fk_assessment_score_id` (`assessment_score_id`);
 
 --
@@ -322,6 +304,13 @@ ALTER TABLE `client`
 ALTER TABLE `domain`
   ADD PRIMARY KEY (`domain_id`,`assess_id`),
   ADD KEY `domain_ibfk_1` (`assess_id`);
+
+--
+-- Indexes for table `domain_info`
+--
+ALTER TABLE `domain_info`
+  ADD PRIMARY KEY (`domain_name`),
+  ADD UNIQUE KEY `domain_id` (`domain_id`);
 
 --
 -- Indexes for table `questions`
@@ -378,12 +367,12 @@ ALTER TABLE `assessments`
 -- AUTO_INCREMENT for table `assessment_score`
 --
 ALTER TABLE `assessment_score`
-  MODIFY `assessment_score_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `assessment_score_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `avg_score`
 --
 ALTER TABLE `avg_score`
-  MODIFY `avg_score_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `avg_score_id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `client`
 --
@@ -393,7 +382,7 @@ ALTER TABLE `client`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `question_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `question_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `raters`
 --
@@ -447,7 +436,8 @@ ALTER TABLE `client`
 -- Constraints for table `domain`
 --
 ALTER TABLE `domain`
-  ADD CONSTRAINT `domain_ibfk_1` FOREIGN KEY (`assess_id`) REFERENCES `assessments` (`assess_id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `domain_ibfk_1` FOREIGN KEY (`assess_id`) REFERENCES `assessments` (`assess_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `domain_info` (`domain_id`);
 
 --
 -- Constraints for table `responses`

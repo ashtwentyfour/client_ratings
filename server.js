@@ -18,6 +18,14 @@ app.use(bodyParser.json());
 
 var code_compile = 'javac -d rating_system/bin -sourcepath rating_system/src rating_system/src/scoring/*.java';
 
+var con = mysql.createConnection({
+  host: "192.168.99.100",
+  user: "root",
+  password: "abcd",
+  port: 8081,
+  database: 'client_ratings'
+});
+
 /*
    compute scores for companies from a particular industry and location
 */
@@ -56,13 +64,14 @@ app.get('/getassessmentscores/:client', function(req, res){
 
   var body = new EventEmitter();
   // db parameters
+  /*
   var con = mysql.createConnection({
     host: "192.168.99.100",
     user: "root",
     password: "abcd",
     port: 8081,
     database: 'client_ratings'
-  });
+  });*/
   // connect to the db and execute queries
   con.connect(function(err) {
     if(err) {
@@ -95,13 +104,14 @@ app.post('/addcompany', function(req,res){
 
     var body = new EventEmitter();
     // db parameters
+    /*
     var con = mysql.createConnection({
       host: "192.168.99.100",
       user: "root",
       password: "abcd",
       port: 8081,
       database: 'client_ratings'
-    });
+    });*/
     // connect to the db and execute queries
     con.connect(function(err) {
       if(err) {
@@ -120,6 +130,59 @@ app.post('/addcompany', function(req,res){
     });
 });
 
+app.post('/adddomain', function(req,res){
+
+  var body = new EventEmitter();
+  // db parameters
+  /*
+  var con = mysql.createConnection({
+    host: "192.168.99.100",
+    user: "root",
+    password: "abcd",
+    port: 8081,
+    database: 'client_ratings'
+  });*/
+
+  con.connect(function(err) {
+    if(err) {
+      console.log('Error connecting to Db');
+      return;
+    }
+    console.log('Connection to DB established');
+    body.emit('connected');
+  });
+
+  body.on('connected', function(){
+     var get_max_dom_id = 'SELECT MAX(domain_id) FROM domain_info';
+     con.query(get_max_dom_id, function(err,row){
+        var max_id = row[0]['MAX(domain_id)'];
+        max_id = max_id + 1;
+        var query = 'INSERT INTO `domain_info`(`domain_id`, `domain_name`, `domain_description`) VALUES (';
+        query = query + max_id.toString() + ', ';
+        query = query + '"' + req.body['domain_name'] + '", ';
+        query = query + '"' + req.body['domain_description'] + '")';
+        con.query(query, function(err,resp){
+           if(err) throw err;
+           //console.log('domain added to database\n');
+           for(var i = 0; i < req.body['questions'].length; i++) {
+              req.body['questions'][i]['domain_id'] = max_id;
+              con.query('INSERT INTO questions SET ?', req.body['questions'][i], function(err,resp){
+                  console.log('question added');
+              });
+           }
+           res.end('domain and questions added to database\n');
+        });
+     });
+  });
+
+});
+
+
+
+app.post('/createnewassessment', function(req,res){
+       
+});
+
 
 // listen on port 8081
 var server = app.listen(8081, function () {
@@ -128,4 +191,4 @@ var server = app.listen(8081, function () {
   var port = server.address().port
   console.log("app listening at http://%s:%s", host, port)
 
-})
+});

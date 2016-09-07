@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Sep 06, 2016 at 07:14 AM
+-- Generation Time: Sep 07, 2016 at 05:25 AM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -43,7 +43,8 @@ CREATE TABLE `assessments` (
 
 INSERT INTO `assessments` (`assess_id`, `user_id`, `client_id`, `assess_date`, `survey_name`, `instructions`, `total_score`, `global_rel_score`) VALUES
 (1, 1, 1, '2015-12-01', 'survey_1', 'take the survey', 1.35, 35.05037136444091),
-(2, 2, 2, '2015-10-14', 'survey_2', 'take the survey', 2.35, 64.94962863555908);
+(2, 2, 2, '2015-10-14', 'survey_2', 'take the survey', 2.35, 64.94962863555908),
+(8, 1, 2, '2015-10-10', NULL, NULL, -1, -1);
 
 -- --------------------------------------------------------
 
@@ -117,7 +118,8 @@ CREATE TABLE `domain` (
 
 INSERT INTO `domain` (`domain_id`, `assess_id`, `domain_name`, `domain_explanation`) VALUES
 (1, 1, 'physical', 'physical security'),
-(1, 2, 'physical', 'physical security');
+(1, 2, 'physical', 'physical security'),
+(1, 8, 'physical security', 'physical security');
 
 -- --------------------------------------------------------
 
@@ -362,7 +364,7 @@ ALTER TABLE `user_assessments`
 -- AUTO_INCREMENT for table `assessments`
 --
 ALTER TABLE `assessments`
-  MODIFY `assess_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `assess_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `assessment_score`
 --

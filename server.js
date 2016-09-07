@@ -180,7 +180,59 @@ app.post('/adddomain', function(req,res){
 
 
 app.post('/createnewassessment', function(req,res){
-       
+
+  var body = new EventEmitter();
+
+  con.connect(function(err) {
+    if(err) {
+      console.log('Error connecting to Db');
+      return;
+    }
+    console.log('Connection to DB established');
+    body.emit('connected');
+  });
+
+  body.on('connected', function(){
+
+     var query = 'SELECT * FROM client WHERE client_name = "' + req.body['client'] + '"';
+     con.query(query, function(err,row){
+         if(err) throw err;
+         var client_id = row[0]["client_id"];
+         var domain_ids = [];
+         var domain_query = 'SELECT domain_id FROM domain_info WHERE domain_name = "';
+         for(var i = 0; i < req.body["domains"].length; i++) {
+           con.query(domain_query+req.body["domains"][i]["name"]+'"', function(domerr,domid){
+               if(domerr) throw domerr;
+               domain_ids.push(domid[0]["domain_id"]);
+           });
+         }
+         var assessment = {};
+         assessment["client_id"] = client_id;
+         assessment["user_id"] = req.body["user_id"];
+         assessment["assess_date"] = req.body["date"];
+         var max_id = -1;
+         con.query("INSERT INTO assessments SET ?", assessment, function(asserr, assres){
+             if(asserr) throw asserr;
+             con.query("SELECT MAX(assess_id) FROM assessments", function(errmaxass, rowmaxass){
+                 if(errmaxass) throw errmaxass;
+                 max_id = rowmaxass[0]['MAX(assess_id)'];
+                 for(var i = 0; i < domain_ids.length; i++) {
+                    var domassess = {};
+                    domassess["domain_id"] = domain_ids[i];
+                    domassess["assess_id"] = max_id;
+                    domassess["domain_name"] = req.body["domains"][i]["name"];
+                    domassess["domain_explanation"] = req.body["domains"][i]["explanation"];
+                    con.query("INSERT INTO domain SET ?", domassess, function(errdomass, resdomass){
+                        if(errdomass) throw errdomass;
+                        console.log('domain-assessment added\n');
+                    });
+                 }
+                 res.end('assessment '+(max_id).toString()+' created\n');
+             });
+         });
+     });
+  });
+
 });
 
 

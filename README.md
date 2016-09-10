@@ -34,6 +34,10 @@ Create a new database 'client_ratings' and import the 'client_ratings.sql' file 
 
    curl -X POST http://docker-machine-IP:5000/adddomain --header 'Content-Type:application/json' -d '{"domain_name": "Web Security", "domain_description": "Web Security", "questions": [{"question_text": "How secure is the web security ?", "question_rank": 0.2}, {"question_text": "What is the web ?", "question_rank": 0.1}]}'
 
-### ADD A NEW ASSESSMENT
+### CREATE A NEW ASSESSMENT
 
    curl -X POST http://docker-machine-IP:5000/createnewassessment --header 'Content-Type:application/json' -d '{"domains": [{"name": "physical security", "explanation": "physical security"}], "user_id": 1, "date": "2015-10-10", "client": "NationalGrid"}'
+
+### ADD A NEW QUESTION
+
+   curl -X POST http://docker-machine-IP:8081/addquestion --header 'Content-Type:application/json' -d '{"domain_name": "physical security", "text": "what is the importance of physical security ?", "weight": 0.33442}'

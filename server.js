@@ -63,15 +63,7 @@ app.post('/rate_client/:industry/:country', function(req,res){
 app.get('/getassessmentscores/:client', function(req, res){
 
   var body = new EventEmitter();
-  // db parameters
-  /*
-  var con = mysql.createConnection({
-    host: "192.168.99.100",
-    user: "root",
-    password: "abcd",
-    port: 8081,
-    database: 'client_ratings'
-  });*/
+
   // connect to the db and execute queries
   con.connect(function(err) {
     if(err) {
@@ -103,15 +95,7 @@ app.post('/addcompany', function(req,res){
     var query = 'INSERT INTO client SET ?';
 
     var body = new EventEmitter();
-    // db parameters
-    /*
-    var con = mysql.createConnection({
-      host: "192.168.99.100",
-      user: "root",
-      password: "abcd",
-      port: 8081,
-      database: 'client_ratings'
-    });*/
+
     // connect to the db and execute queries
     con.connect(function(err) {
       if(err) {
@@ -133,15 +117,6 @@ app.post('/addcompany', function(req,res){
 app.post('/adddomain', function(req,res){
 
   var body = new EventEmitter();
-  // db parameters
-  /*
-  var con = mysql.createConnection({
-    host: "192.168.99.100",
-    user: "root",
-    password: "abcd",
-    port: 8081,
-    database: 'client_ratings'
-  });*/
 
   con.connect(function(err) {
     if(err) {
@@ -230,6 +205,39 @@ app.post('/createnewassessment', function(req,res){
                  res.end('assessment '+(max_id).toString()+' created\n');
              });
          });
+     });
+  });
+
+});
+
+
+app.post('/addquestion', function(req,res){
+
+  var body = new EventEmitter();
+
+  con.connect(function(err) {
+    if(err) {
+      console.log('Error connecting to Db');
+      return;
+    }
+    console.log('Connection to DB established');
+    body.emit('connected');
+  });
+
+  body.on('connected', function(){
+     var getdomainid = 'SELECT domain_id FROM domain_info WHERE domain_name = '+'"' +req.body["domain_name"]+'"';
+     con.query(getdomainid, function(err,row){
+        if(err) throw err;
+        var domainid = row[0]["domain_id"];
+        var question = {
+          domain_id: domainid,
+          question_text: req.body["text"],
+          question_rank: req.body["weight"]
+        };
+        con.query("INSERT INTO questions SET ?", question, function(qerr,qres){
+            if(qerr) throw qerr;
+            res.end("new question added\n");
+        });
      });
   });
 

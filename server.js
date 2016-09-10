@@ -16,8 +16,10 @@ app.use(express.static('public'));
 
 app.use(bodyParser.json());
 
+// compile scoring system code
 var code_compile = 'javac -d rating_system/bin -sourcepath rating_system/src rating_system/src/scoring/*.java';
 
+// MySQL db connection
 var con = mysql.createConnection({
   host: "192.168.99.100",
   user: "root",
@@ -39,7 +41,7 @@ app.post('/rate_client/:industry/:country', function(req,res){
                console.log('exec error: ' + error);
            }
            else {
-             console.log('code compiled');
+             console.log('code compiled\n');
              body.emit('update');
            }
     });
@@ -81,14 +83,18 @@ app.get('/getassessmentscores/:client', function(req, res){
        var client_id = (rows[0].client_id).toString();
        // use the client_id to retrieve the assessment results
        var query_final = 'SELECT * FROM assessments WHERE client_id = "' + client_id + '"';
-       con.query(query_final, function(err2,rows2){
-          if(err2) throw err2;
+       con.query(query_final, function(clienterr,clientrow){
+          if(clienterr) throw clienterr;
           // return json object with the assessment info
-          res.json(rows2);
+          res.json(clientrow);
        });
     });
   });
 });
+
+/*
+    add a client company to the system
+*/
 
 app.post('/addcompany', function(req,res){
 
@@ -107,12 +113,16 @@ app.post('/addcompany', function(req,res){
     });
     // add client to database
     body.on('connected', function(){
-       con.query(query, req.body, function(err,resp){
+       con.query(query, req.body, function(err,rowres){
           if(err) throw err;
           res.end('added new client\n');
        });
     });
 });
+
+/*
+    add a domain to the system
+*/
 
 app.post('/adddomain', function(req,res){
 
@@ -128,31 +138,35 @@ app.post('/adddomain', function(req,res){
   });
 
   body.on('connected', function(){
+     // retrieve the domain id of the most recently added domain
      var get_max_dom_id = 'SELECT MAX(domain_id) FROM domain_info';
      con.query(get_max_dom_id, function(err,row){
         var max_id = row[0]['MAX(domain_id)'];
+        // id of the new/next domain
         max_id = max_id + 1;
         var query = 'INSERT INTO `domain_info`(`domain_id`, `domain_name`, `domain_description`) VALUES (';
         query = query + max_id.toString() + ', ';
         query = query + '"' + req.body['domain_name'] + '", ';
         query = query + '"' + req.body['domain_description'] + '")';
-        con.query(query, function(err,resp){
-           if(err) throw err;
-           //console.log('domain added to database\n');
+        con.query(query, function(domadderr,resp){
+           if(domadderr) throw domadderr;
            for(var i = 0; i < req.body['questions'].length; i++) {
               req.body['questions'][i]['domain_id'] = max_id;
-              con.query('INSERT INTO questions SET ?', req.body['questions'][i], function(err,resp){
+              con.query('INSERT INTO questions SET ?', req.body['questions'][i], function(quesadderr,quesres){
+                  if(quesadderr) throw quesadderr;
                   console.log('question added');
               });
            }
-           res.end('domain and questions added to database\n');
+           res.end('domain and initial question set added to database\n');
         });
      });
   });
 
 });
 
-
+/*
+    create/register a new client assessment
+*/
 
 app.post('/createnewassessment', function(req,res){
 
@@ -168,11 +182,12 @@ app.post('/createnewassessment', function(req,res){
   });
 
   body.on('connected', function(){
-
+     // client id of the client whose assessment is being added
      var query = 'SELECT * FROM client WHERE client_name = "' + req.body['client'] + '"';
      con.query(query, function(err,row){
          if(err) throw err;
          var client_id = row[0]["client_id"];
+         // get domain ids of the domains that are part of the assessment
          var domain_ids = [];
          var domain_query = 'SELECT domain_id FROM domain_info WHERE domain_name = "';
          for(var i = 0; i < req.body["domains"].length; i++) {
@@ -186,8 +201,10 @@ app.post('/createnewassessment', function(req,res){
          assessment["user_id"] = req.body["user_id"];
          assessment["assess_date"] = req.body["date"];
          var max_id = -1;
+         // add assessment ot the list of assessments
          con.query("INSERT INTO assessments SET ?", assessment, function(asserr, assres){
              if(asserr) throw asserr;
+             // create the (domain , assessment) pairs
              con.query("SELECT MAX(assess_id) FROM assessments", function(errmaxass, rowmaxass){
                  if(errmaxass) throw errmaxass;
                  max_id = rowmaxass[0]['MAX(assess_id)'];
@@ -210,6 +227,9 @@ app.post('/createnewassessment', function(req,res){
 
 });
 
+/*
+    add a question for a particular domain to the system
+*/
 
 app.post('/addquestion', function(req,res){
 

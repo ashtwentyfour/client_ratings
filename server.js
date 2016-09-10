@@ -14,6 +14,12 @@ var urlencodedParser = bodyParser.urlencoded({ extended: true });
 
 app.use(express.static('public'));
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 app.use(bodyParser.json());
 
 // compile scoring system code
@@ -32,7 +38,7 @@ var con = mysql.createConnection({
    compute scores for companies from a particular industry and location
 */
 
-app.post('/rate_client/:industry/:country', function(req,res){
+app.post('/rate_clients/:industry/:country', function(req,res){
 
     var body = new EventEmitter();
     // compile java classes - scoring system

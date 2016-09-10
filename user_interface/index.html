@@ -1,16 +1,27 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
-  <meta charset="UTF-8">
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-  <title>Rating System</title>
-  <script src="app.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-route.js"></script>
 </head>
 
-<body lang="en" ng-app="RatingSystem">
-<div class="container">
-  
+<body>
+  <div class="container" ng-app="RatingSystem" ng-controller="computeScoresController">
+    <form "form-group" ng-submit= "computeScores()" class="text-center">
+        <input ng-model="industry" type="text" name="industry" value=""
+        placeholder="Industry" size="60" required="true"> &nbsp
+        <input ng-model="country" type="text" name="country" value=""
+        placeholder="Country" size="60" required="true"> &nbsp
+        <br>
+        <br>
+        <span>
+          <button class="btn" type="submit" name="button">Rate</button>
+        </span>
 
+      </form>
+  </div>
+  <script src="app.js"></script>
+</body>
 
 </html>

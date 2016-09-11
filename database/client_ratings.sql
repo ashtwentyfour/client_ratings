@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Sep 06, 2016 at 03:55 AM
+-- Generation Time: Sep 11, 2016 at 12:17 AM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -162,7 +162,8 @@ INSERT INTO `questions` (`question_id`, `domain_id`, `question_text`, `question_
 (1, 1, 'Where is your firm located ?', 0.5, 1, ''),
 (2, 1, 'When was your firm established ?', 0.35, 2, ''),
 (10, 2, 'How secure is the web security ?', 0.2, -1, '""'),
-(11, 2, 'What is the web ?', 0.1, -1, '""');
+(11, 2, 'What is the web ?', 0.1, -1, '""'),
+(12, 1, 'what is the importance of physical security ?', 0.33442, -1, '""');
 
 -- --------------------------------------------------------
 
@@ -362,7 +363,7 @@ ALTER TABLE `user_assessments`
 -- AUTO_INCREMENT for table `assessments`
 --
 ALTER TABLE `assessments`
-  MODIFY `assess_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `assess_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `assessment_score`
 --
@@ -382,7 +383,7 @@ ALTER TABLE `client`
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `question_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `question_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT for table `raters`
 --

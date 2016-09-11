@@ -1,0 +1,21 @@
+<div>
+  <h2>Get Client Results</h2>
+  <div class="container" ng-app="RatingSystem" ng-controller="getClientScoresController">
+    <form "form-group" ng-submit= "getClientScores()" class="text-center">
+        <input ng-model="client" type="text" name="client" value=""
+        placeholder="client" size="60" required="true"> &nbsp
+        <br>
+        <br>
+        <span>
+          <button class="btn" type="submit" name="button">Get Assessment Results</button>
+        </span>
+        <br>
+          <ol>
+              <li class="text-info" ng-repeat="clientAssessment in clientAssessments">
+                 <p class="text-info"> <strong>Assessment Date:</strong> {{clientAssessment[1]}} &nbsp  <strong> Score: </strong> {{clientAssessment[0]}} &nbsp <strong> Relative (%) Score: </strong> {{clientAssessment[2]}}</p>
+              </li>
+          </ol>
+        <br>
+    </form>
+  </div>
+</div>

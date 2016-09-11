@@ -1,0 +1,18 @@
+<div>
+  <h2>Rate Client(s) by Industry and Country</h2>
+  <div class="container" ng-app="RatingSystem" ng-controller="computeScoresController">
+    <form "form-group" ng-submit= "computeScores()" class="text-center">
+        <input ng-model="industry" type="text" name="industry" value=""
+        placeholder="Industry" size="60" required="true"> &nbsp
+        <input ng-model="country" type="text" name="country" value=""
+        placeholder="Country" size="60" required="true"> &nbsp
+        <br>
+        <br>
+        <span>
+          <button class="btn" type="submit" name="button">Rate</button>
+        </span>
+        <br>
+        <br>
+      </form>
+  </div>
+</div>

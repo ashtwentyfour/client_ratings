@@ -4,24 +4,20 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-route.js"></script>
+    <script src="app.js"></script>
 </head>
-
-<body>
-  <div class="container" ng-app="RatingSystem" ng-controller="computeScoresController">
-    <form "form-group" ng-submit= "computeScores()" class="text-center">
-        <input ng-model="industry" type="text" name="industry" value=""
-        placeholder="Industry" size="60" required="true"> &nbsp
-        <input ng-model="country" type="text" name="country" value=""
-        placeholder="Country" size="60" required="true"> &nbsp
-        <br>
-        <br>
-        <span>
-          <button class="btn" type="submit" name="button">Rate</button>
-        </span>
-
-      </form>
+<body lang="en" ng-app="RatingSystem">
+  <h2>Client Assessment Tool</h2>
+  <div class="container">
+      <div>
+        <a href="#/assessmentresults">View Client Assessment Results</a>
+      </div>
+      <br>
+      <br>
+      <div>
+        <a href="#/rateclients">Rate Clients</a>
+      </div>
+      <ng-view></ng-view>
   </div>
-  <script src="app.js"></script>
 </body>
-
 </html>

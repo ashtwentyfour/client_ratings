@@ -70,19 +70,6 @@ app.post('/rate_clients/:industry/:country', function(req,res){
 
 app.get('/getassessmentscores/:client', function(req, res){
 
-  var body = new EventEmitter();
-
-  // connect to the db and execute queries
-  con.connect(function(err) {
-    if(err) {
-      console.log('Error connecting to Db');
-      return;
-    }
-    console.log('Connection to DB established');
-    body.emit('connected');
-  });
-  // select client info from the client table
-  body.on('connected', function(){
     var query = 'SELECT * FROM client WHERE client_name = "' + req.params.client + '"';
     con.query(query,function(err,rows){
        if(err) throw err;
@@ -95,7 +82,7 @@ app.get('/getassessmentscores/:client', function(req, res){
           res.json(clientrow);
        });
     });
-  });
+
 });
 
 /*
@@ -104,26 +91,13 @@ app.get('/getassessmentscores/:client', function(req, res){
 
 app.post('/addcompany', function(req,res){
 
-    var query = 'INSERT INTO client SET ?';
+   var query = 'INSERT INTO client SET ?';
+   // add client to database
+   con.query(query, req.body, function(err,rowres){
+       if(err) throw err;
+       res.end('added new client\n');
+   });
 
-    var body = new EventEmitter();
-
-    // connect to the db and execute queries
-    con.connect(function(err) {
-      if(err) {
-        console.log('Error connecting to Db');
-        return;
-      }
-      console.log('Connection to DB established');
-      body.emit('connected');
-    });
-    // add client to database
-    body.on('connected', function(){
-       con.query(query, req.body, function(err,rowres){
-          if(err) throw err;
-          res.end('added new client\n');
-       });
-    });
 });
 
 /*
@@ -132,21 +106,9 @@ app.post('/addcompany', function(req,res){
 
 app.post('/adddomain', function(req,res){
 
-  var body = new EventEmitter();
-
-  con.connect(function(err) {
-    if(err) {
-      console.log('Error connecting to Db');
-      return;
-    }
-    console.log('Connection to DB established');
-    body.emit('connected');
-  });
-
-  body.on('connected', function(){
-     // retrieve the domain id of the most recently added domain
-     var get_max_dom_id = 'SELECT MAX(domain_id) FROM domain_info';
-     con.query(get_max_dom_id, function(err,row){
+   // retrieve the domain id of the most recently added domain
+   var get_max_dom_id = 'SELECT MAX(domain_id) FROM domain_info';
+   con.query(get_max_dom_id, function(err,row){
         var max_id = row[0]['MAX(domain_id)'];
         // id of the new/next domain
         max_id = max_id + 1;
@@ -165,8 +127,7 @@ app.post('/adddomain', function(req,res){
            }
            res.end('domain and initial question set added to database\n');
         });
-     });
-  });
+   });
 
 });
 
@@ -176,21 +137,9 @@ app.post('/adddomain', function(req,res){
 
 app.post('/createnewassessment', function(req,res){
 
-  var body = new EventEmitter();
-
-  con.connect(function(err) {
-    if(err) {
-      console.log('Error connecting to Db');
-      return;
-    }
-    console.log('Connection to DB established');
-    body.emit('connected');
-  });
-
-  body.on('connected', function(){
-     // client id of the client whose assessment is being added
-     var query = 'SELECT * FROM client WHERE client_name = "' + req.body['client'] + '"';
-     con.query(query, function(err,row){
+   // client id of the client whose assessment is being added
+   var query = 'SELECT * FROM client WHERE client_name = "' + req.body['client'] + '"';
+   con.query(query, function(err,row){
          if(err) throw err;
          var client_id = row[0]["client_id"];
          // get domain ids of the domains that are part of the assessment
@@ -227,8 +176,7 @@ app.post('/createnewassessment', function(req,res){
                  }
                  res.end('assessment '+(max_id).toString()+' created\n');
              });
-         });
-     });
+      });
   });
 
 });
@@ -239,20 +187,8 @@ app.post('/createnewassessment', function(req,res){
 
 app.post('/addquestion', function(req,res){
 
-  var body = new EventEmitter();
-
-  con.connect(function(err) {
-    if(err) {
-      console.log('Error connecting to Db');
-      return;
-    }
-    console.log('Connection to DB established');
-    body.emit('connected');
-  });
-
-  body.on('connected', function(){
-     var getdomainid = 'SELECT domain_id FROM domain_info WHERE domain_name = '+'"' +req.body["domain_name"]+'"';
-     con.query(getdomainid, function(err,row){
+   var getdomainid = 'SELECT domain_id FROM domain_info WHERE domain_name = '+'"' +req.body["domain_name"]+'"';
+   con.query(getdomainid, function(err,row){
         if(err) throw err;
         var domainid = row[0]["domain_id"];
         var question = {
@@ -264,8 +200,7 @@ app.post('/addquestion', function(req,res){
             if(qerr) throw qerr;
             res.end("new question added\n");
         });
-     });
-  });
+   });
 
 });
 

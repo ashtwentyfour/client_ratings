@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Sep 04, 2016 at 06:53 AM
+-- Generation Time: Sep 11, 2016 at 12:17 AM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -30,11 +30,11 @@ CREATE TABLE `assessments` (
   `assess_id` int(50) NOT NULL,
   `user_id` int(50) NOT NULL,
   `client_id` int(50) NOT NULL,
-  `assess_date` date NOT NULL,
-  `survey_name` varchar(150) NOT NULL,
-  `instructions` varchar(255) NOT NULL,
-  `total_score` double NOT NULL,
-  `global_rel_score` double NOT NULL
+  `assess_date` date NOT NULL DEFAULT '1990-10-03',
+  `survey_name` varchar(150) DEFAULT NULL,
+  `instructions` varchar(255) DEFAULT NULL,
+  `total_score` double NOT NULL DEFAULT '-1',
+  `global_rel_score` double NOT NULL DEFAULT '-1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -43,7 +43,7 @@ CREATE TABLE `assessments` (
 
 INSERT INTO `assessments` (`assess_id`, `user_id`, `client_id`, `assess_date`, `survey_name`, `instructions`, `total_score`, `global_rel_score`) VALUES
 (1, 1, 1, '2015-12-01', 'survey_1', 'take the survey', 1.35, 35.05037136444091),
-(2, 2, 2, '2015-10-14', 'survey_2', 'take the survey', 4.1, 64.94962863555908);
+(2, 2, 2, '2015-10-14', 'survey_2', 'take the survey', 2.35, 64.94962863555908);
 
 -- --------------------------------------------------------
 
@@ -80,13 +80,13 @@ CREATE TABLE `avg_score` (
 
 CREATE TABLE `client` (
   `client_id` int(255) NOT NULL,
-  `rater_id` int(100) NOT NULL,
+  `rater_id` int(100) NOT NULL DEFAULT '1',
   `client_name` varchar(50) NOT NULL,
   `client_industry` varchar(50) NOT NULL,
-  `parent_company` varchar(75) NOT NULL,
+  `parent_company` varchar(75) DEFAULT NULL,
   `client_division` varchar(50) NOT NULL,
-  `client_location` varchar(255) NOT NULL,
-  `industry_size` int(255) NOT NULL
+  `client_location` varchar(255) NOT NULL DEFAULT 'USA',
+  `industry_size` int(255) NOT NULL DEFAULT '-1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
@@ -94,6 +94,7 @@ CREATE TABLE `client` (
 --
 
 INSERT INTO `client` (`client_id`, `rater_id`, `client_name`, `client_industry`, `parent_company`, `client_division`, `client_location`, `industry_size`) VALUES
+(5, 1, 'Apple', 'Consumer Electronics', 'Apple', 'Hardware', 'USA', 2000),
 (1, 1, 'General Electric', 'Electricity', 'General Electric Holding Company', 'Hardware', 'USA', 20000),
 (2, 2, 'NationalGrid', 'Electricity', 'NG', 'Hardware', 'USA', 100000);
 
@@ -121,26 +122,48 @@ INSERT INTO `domain` (`domain_id`, `assess_id`, `domain_name`, `domain_explanati
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `domain_info`
+--
+
+CREATE TABLE `domain_info` (
+  `domain_id` int(10) NOT NULL,
+  `domain_name` varchar(255) NOT NULL,
+  `domain_description` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `domain_info`
+--
+
+INSERT INTO `domain_info` (`domain_id`, `domain_name`, `domain_description`) VALUES
+(1, 'physical security', 'physical security'),
+(2, 'Web Security', 'Web Security');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `questions`
 --
 
 CREATE TABLE `questions` (
   `question_id` int(10) NOT NULL,
   `domain_id` int(10) NOT NULL,
-  `question_number` int(100) NOT NULL,
   `question_text` varchar(225) NOT NULL,
-  `question_rank` double NOT NULL,
-  `dependent_question_id` int(10) NOT NULL,
-  `dependent_question_text` varchar(225) NOT NULL
+  `question_rank` double NOT NULL DEFAULT '0.5',
+  `dependent_question_id` int(10) NOT NULL DEFAULT '-1',
+  `dependent_question_text` varchar(225) NOT NULL DEFAULT '""'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `questions`
 --
 
-INSERT INTO `questions` (`question_id`, `domain_id`, `question_number`, `question_text`, `question_rank`, `dependent_question_id`, `dependent_question_text`) VALUES
-(1, 1, 1, 'Where is your firm located ?', 0.5, 1, ''),
-(2, 1, 2, 'When was your firm established ?', 0.35, 2, '');
+INSERT INTO `questions` (`question_id`, `domain_id`, `question_text`, `question_rank`, `dependent_question_id`, `dependent_question_text`) VALUES
+(1, 1, 'Where is your firm located ?', 0.5, 1, ''),
+(2, 1, 'When was your firm established ?', 0.35, 2, ''),
+(10, 2, 'How secure is the web security ?', 0.2, -1, '""'),
+(11, 2, 'What is the web ?', 0.1, -1, '""'),
+(12, 1, 'what is the importance of physical security ?', 0.33442, -1, '""');
 
 -- --------------------------------------------------------
 
@@ -188,7 +211,7 @@ INSERT INTO `responses` (`response_id`, `question_id`, `assess_id`, `answer_nume
 (1, 1, 1, 2, 'n/a'),
 (2, 2, 1, 1, 'n/a'),
 (3, 1, 2, 4, 'n/a'),
-(4, 2, 2, 6, 'n/a');
+(4, 2, 2, 1, 'n/a');
 
 -- --------------------------------------------------------
 
@@ -250,7 +273,8 @@ CREATE TABLE `user_assessments` (
 ALTER TABLE `assessments`
   ADD PRIMARY KEY (`assess_id`,`client_id`),
   ADD KEY `assessments_ibfk_1` (`user_id`),
-  ADD KEY `assessments_ibfk_2` (`client_id`);
+  ADD KEY `assessments_ibfk_2` (`client_id`),
+  ADD KEY `assess_date` (`assess_date`);
 
 --
 -- Indexes for table `assessment_score`
@@ -264,14 +288,16 @@ ALTER TABLE `assessment_score`
 --
 ALTER TABLE `avg_score`
   ADD PRIMARY KEY (`avg_score_id`),
+  ADD UNIQUE KEY `assessment_score_id` (`assessment_score_id`),
   ADD KEY `fk_assessment_score_id` (`assessment_score_id`);
 
 --
 -- Indexes for table `client`
 --
 ALTER TABLE `client`
-  ADD PRIMARY KEY (`client_id`),
-  ADD KEY `del_user_fk` (`rater_id`);
+  ADD PRIMARY KEY (`client_name`,`client_division`),
+  ADD KEY `del_user_fk` (`rater_id`),
+  ADD KEY `client_id` (`client_id`);
 
 --
 -- Indexes for table `domain`
@@ -279,6 +305,13 @@ ALTER TABLE `client`
 ALTER TABLE `domain`
   ADD PRIMARY KEY (`domain_id`,`assess_id`),
   ADD KEY `domain_ibfk_1` (`assess_id`);
+
+--
+-- Indexes for table `domain_info`
+--
+ALTER TABLE `domain_info`
+  ADD PRIMARY KEY (`domain_name`),
+  ADD UNIQUE KEY `domain_id` (`domain_id`);
 
 --
 -- Indexes for table `questions`
@@ -330,7 +363,7 @@ ALTER TABLE `user_assessments`
 -- AUTO_INCREMENT for table `assessments`
 --
 ALTER TABLE `assessments`
-  MODIFY `assess_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `assess_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `assessment_score`
 --
@@ -345,12 +378,12 @@ ALTER TABLE `avg_score`
 -- AUTO_INCREMENT for table `client`
 --
 ALTER TABLE `client`
-  MODIFY `client_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `client_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `question_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `question_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT for table `raters`
 --
@@ -385,7 +418,8 @@ ALTER TABLE `user_assessments`
 --
 ALTER TABLE `assessments`
   ADD CONSTRAINT `assessments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `assessments_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `client` (`client_id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_client_id` FOREIGN KEY (`client_id`) REFERENCES `client` (`client_id`),
+  ADD CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 --
 -- Constraints for table `assessment_score`
@@ -403,7 +437,8 @@ ALTER TABLE `client`
 -- Constraints for table `domain`
 --
 ALTER TABLE `domain`
-  ADD CONSTRAINT `domain_ibfk_1` FOREIGN KEY (`assess_id`) REFERENCES `assessments` (`assess_id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `domain_ibfk_1` FOREIGN KEY (`assess_id`) REFERENCES `assessments` (`assess_id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `domain_info` (`domain_id`);
 
 --
 -- Constraints for table `responses`
@@ -421,7 +456,7 @@ ALTER TABLE `risks`
 -- Constraints for table `user`
 --
 ALTER TABLE `user`
-  ADD CONSTRAINT `user_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `client` (`client_id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_client_id_2` FOREIGN KEY (`client_id`) REFERENCES `client` (`client_id`);
 
 --
 -- Constraints for table `user_assessments`

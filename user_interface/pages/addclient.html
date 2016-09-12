@@ -1,0 +1,22 @@
+<div>
+  <h2>Add Client</h2>
+  <div class="container" ng-app="RatingSystem" ng-controller="addClientController">
+    <form "form-group" ng-submit= "addNewClient()" class="text-center">
+        <input ng-model="client_name" type="text" name="client_name" value=""
+        placeholder="client_name" size="40" required="true"> &nbsp
+        <input ng-model="client_location" type="text" name="client_location" value=""
+        placeholder="client_location" size="40" required="true"> &nbsp
+        <input ng-model="client_division" type="text" name="client_division" value=""
+        placeholder="client_division" size="40" required="true"> &nbsp
+        <input ng-model="client_industry" type="text" name="client_industry" value=""
+        placeholder="client_industry" size="40" required="true"> &nbsp
+        <br>
+        <br>
+        <span>
+          <button class="btn" type="submit" name="button">Add Client</button>
+        </span>
+        <br>
+        <br>
+      </form>
+  </div>
+</div>

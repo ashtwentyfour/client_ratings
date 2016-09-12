@@ -39,6 +39,44 @@ angular.module("RatingSystem", ["ngRoute"])
     }
 })
 
+.controller("addClientController", function($scope, $route, $routeParams, $location, $http){
+
+    $scope.addNewClient = function() {
+       var requestUrl = 'http://localhost:8081/addclient';
+       var clientInfo = {};
+       if(this.client_name) {
+          clientInfo["client_name"] = this.client_name;
+       }
+       if(this.client_location) {
+         clientInfo["client_location"] = this.client_location;
+       }
+       if(this.client_division) {
+         clientInfo["client_division"] = this.client_division;
+       }
+       if(this.client_industry) {
+         clientInfo["client_industry"] = this.client_industry;
+       }
+       var request = {
+            method: 'POST',
+            url: requestUrl,
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            data: clientInfo
+       };
+       $http(request).then(function(response){
+          console.log('client added\n');
+          alert(response.data);
+        },
+        function(response){
+          console.log('error occured while adding client\n');
+          alert(response.data);
+        }
+       );
+    }
+
+})
+
 .config(function($routeProvider, $locationProvider){
   $routeProvider
   .when('/assessmentresults',{
@@ -48,5 +86,9 @@ angular.module("RatingSystem", ["ngRoute"])
   .when('/rateclients',{
     templateUrl: "./pages/rateclient.html",
     controller: "computeScoresController"
+  })
+  .when('/addclient',{
+    templateUrl: "./pages/addclient.html",
+    controller: "addClientController"
   })
 });

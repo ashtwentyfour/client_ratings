@@ -44,7 +44,8 @@ app.post('/rate_clients/:industry/:country', function(req,res){
     // compile java classes - scoring system
     var compile = exec(code_compile, function(error, stdout, stderr){
            if (error !== null) {
-               console.log('exec error: ' + error);
+               console.log('java exec error: ' + error);
+               res.end('code compilation error');
            }
            else {
              console.log('code compiled\n');
@@ -57,9 +58,10 @@ app.post('/rate_clients/:industry/:country', function(req,res){
       code_run = code_run + ' ' + req.params.industry + ' ' + req.params.country;
       var run = exec(code_run, function(error, stdout, stderr){
              if (error !== null) {
-                 console.log('exec error: ' + error);
+                 console.log('java exec error: ' + error);
+                 res.end('error occurred while computing scores');
              }
-             res.end('rating complete\n');
+             res.end('rating completed successfully !');
       });
     });
 });
@@ -77,7 +79,10 @@ app.get('/getassessmentscores/:client', function(req, res){
        // use the client_id to retrieve the assessment results
        var query_final = 'SELECT * FROM assessments WHERE client_id = "' + client_id + '"';
        con.query(query_final, function(clienterr,clientrow){
-          if(clienterr) throw clienterr;
+          if(clienterr) {
+             console.log(clienterr);
+             res.end('error occurred while retrieving client information');
+          };
           // return json object with the assessment info
           res.json(clientrow);
        });
@@ -89,13 +94,16 @@ app.get('/getassessmentscores/:client', function(req, res){
     add a client company to the system
 */
 
-app.post('/addcompany', function(req,res){
+app.post('/addclient', function(req,res){
 
    var query = 'INSERT INTO client SET ?';
    // add client to database
    con.query(query, req.body, function(err,rowres){
-       if(err) throw err;
-       res.end('added new client\n');
+       if(err) {
+         console.log(err);
+         res.end('error occurred while adding client information');
+       }
+       res.end('added new client !');
    });
 
 });
@@ -109,6 +117,10 @@ app.post('/adddomain', function(req,res){
    // retrieve the domain id of the most recently added domain
    var get_max_dom_id = 'SELECT MAX(domain_id) FROM domain_info';
    con.query(get_max_dom_id, function(err,row){
+        if(err) {
+          console.log(err);
+          res.end('error occurred while retrieving domain information');
+        }
         var max_id = row[0]['MAX(domain_id)'];
         // id of the new/next domain
         max_id = max_id + 1;
@@ -117,11 +129,17 @@ app.post('/adddomain', function(req,res){
         query = query + '"' + req.body['domain_name'] + '", ';
         query = query + '"' + req.body['domain_description'] + '")';
         con.query(query, function(domadderr,resp){
-           if(domadderr) throw domadderr;
+           if(domadderr) {
+             console.log(domadderr);
+             res.end('error occurred while adding domain details')
+           }
            for(var i = 0; i < req.body['questions'].length; i++) {
               req.body['questions'][i]['domain_id'] = max_id;
               con.query('INSERT INTO questions SET ?', req.body['questions'][i], function(quesadderr,quesres){
-                  if(quesadderr) throw quesadderr;
+                  if(quesadderr) {
+                     console.log(quesadderr);
+                     res.end('error occurred while adding question');
+                  };
                   console.log('question added');
               });
            }
@@ -140,14 +158,20 @@ app.post('/createnewassessment', function(req,res){
    // client id of the client whose assessment is being added
    var query = 'SELECT * FROM client WHERE client_name = "' + req.body['client'] + '"';
    con.query(query, function(err,row){
-         if(err) throw err;
+         if(err) {
+           console.log(err);
+           res.end('error occurred while retrieving client information');
+         }
          var client_id = row[0]["client_id"];
          // get domain ids of the domains that are part of the assessment
          var domain_ids = [];
          var domain_query = 'SELECT domain_id FROM domain_info WHERE domain_name = "';
          for(var i = 0; i < req.body["domains"].length; i++) {
            con.query(domain_query+req.body["domains"][i]["name"]+'"', function(domerr,domid){
-               if(domerr) throw domerr;
+               if(domerr) {
+                 console.log(domerr);
+                 res.end('error occurred while identifying domain');
+               }
                domain_ids.push(domid[0]["domain_id"]);
            });
          }
@@ -158,10 +182,16 @@ app.post('/createnewassessment', function(req,res){
          var max_id = -1;
          // add assessment ot the list of assessments
          con.query("INSERT INTO assessments SET ?", assessment, function(asserr, assres){
-             if(asserr) throw asserr;
+             if(asserr) {
+                console.log(asserr);
+                res.end('error occurred while adding assessment');
+             }
              // create the (domain , assessment) pairs
              con.query("SELECT MAX(assess_id) FROM assessments", function(errmaxass, rowmaxass){
-                 if(errmaxass) throw errmaxass;
+                 if(errmaxass) {
+                   console.log(errmaxass);
+                   res.end('error occurred while adding assessment');
+                 }
                  max_id = rowmaxass[0]['MAX(assess_id)'];
                  for(var i = 0; i < domain_ids.length; i++) {
                     var domassess = {};
@@ -170,7 +200,10 @@ app.post('/createnewassessment', function(req,res){
                     domassess["domain_name"] = req.body["domains"][i]["name"];
                     domassess["domain_explanation"] = req.body["domains"][i]["explanation"];
                     con.query("INSERT INTO domain SET ?", domassess, function(errdomass, resdomass){
-                        if(errdomass) throw errdomass;
+                        if(errdomass) {
+                          console.log(errdomass);
+                          res.end('error occurred while adding domain-assessment pair');
+                        }
                         console.log('domain-assessment added\n');
                     });
                  }
@@ -189,7 +222,10 @@ app.post('/addquestion', function(req,res){
 
    var getdomainid = 'SELECT domain_id FROM domain_info WHERE domain_name = '+'"' +req.body["domain_name"]+'"';
    con.query(getdomainid, function(err,row){
-        if(err) throw err;
+        if(err) {
+          console.log(err);
+          res.end('error occurred while retrieving domain information');
+        }
         var domainid = row[0]["domain_id"];
         var question = {
           domain_id: domainid,
@@ -197,7 +233,10 @@ app.post('/addquestion', function(req,res){
           question_rank: req.body["weight"]
         };
         con.query("INSERT INTO questions SET ?", question, function(qerr,qres){
-            if(qerr) throw qerr;
+            if(qerr) {
+              console.log(qerr);
+              res.end('error occurred while adding question');
+            }
             res.end("new question added\n");
         });
    });

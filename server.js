@@ -157,6 +157,16 @@ app.post('/createnewassessment', function(req,res){
 
    // client id of the client whose assessment is being added
    var query = 'SELECT * FROM client WHERE client_name = "' + req.body['client'] + '"';
+   // increment number of assessments for the client by 1
+   var update_clint_info = 'UPDATE client SET num_assessments = num_assessments + 1 WHERE client_name = "';
+   update_client = update_client + req.body['client'] + '"';
+   con.query(update_client, function(uperr,uprow){
+     if(uperr) {
+       console.log(uperr);
+       res.end('error occurred while updating client information');
+     }
+   });
+   // add assessment 
    con.query(query, function(err,row){
          if(err) {
            console.log(err);

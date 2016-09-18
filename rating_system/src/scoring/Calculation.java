@@ -89,7 +89,7 @@ public class Calculation {
 		      stmt = conn.createStatement();
 		      // select all the clients who are part of the industry and in the location specified
 		      String sql = "SELECT * FROM `client` WHERE `client_industry` = '" + industry
-		    		     + "' AND `client_location` = '" + location + "'";
+		    		     + "' AND `client_location` = '" + location + "' AND `num_assessments` > 0";
 		      ResultSet sel = stmt.executeQuery(sql);
 		      // Extract data from result set
 		      while(sel.next()) {
@@ -102,6 +102,10 @@ public class Calculation {
 		    	   Client c = new Client(ind, client_loc, name, id);
 		    	   clients.add(c);
 		      }
+					if(clients.size() == 0) {
+						 System.out.println("no assessments found");
+						 return;
+					}
 		      // start a new client scoring
 		      s = new Scoring(clients);
 		      // for each client extract the latest assessment information
@@ -120,7 +124,7 @@ public class Calculation {
 		    		  assess_ids.put(c.getID(), reqd_ID);
 		    		  break;
 		    	  }
-                  // for this client select all the domains that were recently assessed
+            // for this client select all the domains that were recently assessed
 		    	  sql = "SELECT * FROM `domain` WHERE `assess_id` = " + Integer.toString(reqd_ID);
 		    	  stmt = conn.createStatement();
 		    	  sel = stmt.executeQuery(sql);

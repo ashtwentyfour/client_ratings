@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Sep 11, 2016 at 12:17 AM
+-- Generation Time: Sep 18, 2016 at 10:44 PM
 -- Server version: 5.7.14
 -- PHP Version: 5.6.25
 
@@ -86,17 +86,18 @@ CREATE TABLE `client` (
   `parent_company` varchar(75) DEFAULT NULL,
   `client_division` varchar(50) NOT NULL,
   `client_location` varchar(255) NOT NULL DEFAULT 'USA',
-  `industry_size` int(255) NOT NULL DEFAULT '-1'
+  `industry_size` int(255) NOT NULL DEFAULT '-1',
+  `num_assessments` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `client`
 --
 
-INSERT INTO `client` (`client_id`, `rater_id`, `client_name`, `client_industry`, `parent_company`, `client_division`, `client_location`, `industry_size`) VALUES
-(5, 1, 'Apple', 'Consumer Electronics', 'Apple', 'Hardware', 'USA', 2000),
-(1, 1, 'General Electric', 'Electricity', 'General Electric Holding Company', 'Hardware', 'USA', 20000),
-(2, 2, 'NationalGrid', 'Electricity', 'NG', 'Hardware', 'USA', 100000);
+INSERT INTO `client` (`client_id`, `rater_id`, `client_name`, `client_industry`, `parent_company`, `client_division`, `client_location`, `industry_size`, `num_assessments`) VALUES
+(5, 1, 'Apple', 'Consumer Electronics', 'Apple', 'Hardware', 'USA', 2000, 0),
+(1, 1, 'General Electric', 'Electricity', 'General Electric Holding Company', 'Hardware', 'USA', 20000, 1),
+(2, 2, 'NationalGrid', 'Electricity', 'NG', 'Hardware', 'USA', 100000, 1);
 
 -- --------------------------------------------------------
 
